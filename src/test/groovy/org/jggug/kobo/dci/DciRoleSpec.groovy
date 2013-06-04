@@ -48,10 +48,9 @@ class DciRoleSpec extends Specification {
         data.as(SampleRole) {
             assert data.hello() == "Hello, FooBar."
 
-            // 無念??
+            // no effect
             def data2 = new SampleData(name: "Bazzz")
             data2.hello() == "Hello, Bazzz."
-
         } == null
 
         then:

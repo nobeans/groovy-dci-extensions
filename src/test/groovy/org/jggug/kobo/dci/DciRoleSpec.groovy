@@ -18,15 +18,11 @@ class DciRoleSpec extends Specification {
             assert data.hello() == "Hello, FooBar."
         } == null
 
-        when: "for another instance of SampleData"
+        when: "no effect for another instance of SampleData"
         data.asRole(SampleRole) {
-            assert data.hello() == "Hello, FooBar."
-
-            // no effect: data2 doesn't have hello method
-            def data2 = new SampleData(name: "Bazzz")
-            data2.hello() == "Hello, Bazzz."
+            def anotherData = new SampleData(name: "Bazzz")
+            anotherData.hello() == "Hello, Bazzz."
             assert false
-
         } == null
 
         then:
@@ -48,13 +44,10 @@ class DciRoleSpec extends Specification {
             assert data.hello() == "Hello, FooBar."
         } == null
 
-        and: "Unfortunately, `use` affects another instance of SampleData"
+        and: "Unfortunately, `use` method affects another instance of SampleData"
         data.use(SampleRole) {
-            assert data.hello() == "Hello, FooBar."
-
-            // 影響が漏れている。data2はSampleRoleのつもりじゃないのに！
-            def data2 = new SampleData(name: "Bazzz")
-            assert data2.hello() == "Hello, Bazzz."
+            def anotherData = new SampleData(name: "Bazzz")
+            assert anotherData.hello() == "Hello, Bazzz."
 
         } == null
 

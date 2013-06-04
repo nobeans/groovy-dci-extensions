@@ -3,38 +3,22 @@ package org.jggug.kobo.dci
 class ObjectExtension {
 
     static Object asRole(Object self, Class roleClass, Closure closure) {
-        println ">" * 50
-        println "self.metaClass: " + self.metaClass
-
         def savedMetaClass = self.metaClass
-
-        println "savedMetaClass: " + savedMetaClass
         try {
-            def myMetaClass = new DelegatingMetaClass(self.getClass())
-
-            println "> myMetaClass: " + myMetaClass
-            println "> myMetaClass.getMetaMethods: " + myMetaClass.getMetaMethods()*.name.sort()
-            println myMetaClass.getMetaMethod("hello", [] as Object[])
-
+            // replaced a top of metaClass
+            def myMetaClass = new DelegatingMetaClass(savedMetaClass)
             self.setMetaClass(myMetaClass)
 
-            println "> self.metaClass:" + self.metaClass
-
+            // mix-in role
             self.metaClass.mixin roleClass
 
-            println "> self.metaClass.getMetaMethods: " + self.metaClass.getMetaMethods()*.name.sort()
-            println myMetaClass.getMetaMethod("hello", [] as Object[])
-            println savedMetaClass.getMetaMethod("hello", [] as Object[])
-            println self.metaClass.getMetaMethod("hello", [] as Object[])
-
+            // evaluate closure
             closure.delegate = self
             closure.call()
 
         } finally {
-            println "savedMetaClass: " + savedMetaClass
+            // restore metaClass
             self.setMetaClass(savedMetaClass)
-            println "self.metaClass: " + self.metaClass
-            println self.metaClass.getMetaMethod("hello", [] as Object[])
         }
     }
 

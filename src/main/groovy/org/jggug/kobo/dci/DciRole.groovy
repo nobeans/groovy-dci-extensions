@@ -1,4 +1,4 @@
-package org.jggug.kobo.dci.annotations
+package org.jggug.kobo.dci
 
 import groovy.transform.AnnotationCollector
 

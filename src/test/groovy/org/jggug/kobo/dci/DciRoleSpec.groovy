@@ -1,6 +1,5 @@
 package org.jggug.kobo.dci
 
-import org.jggug.kobo.dci.annotations.DciRole
 import spock.lang.Specification
 
 class DciRoleSpec extends Specification {

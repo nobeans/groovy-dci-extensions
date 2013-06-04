@@ -1,0 +1,24 @@
+apply plugin:'groovy'
+apply plugin:'idea'
+
+defaultTasks 'clean', 'test'
+
+repositories {
+    mavenCentral()
+    mavenRepo name: "codehaus", url: "http://repository.codehaus.org"
+    mavenRepo name: "codehaus-snapshots", url: "http://snapshots.repository.codehaus.org"
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.1.4'
+    testCompile 'junit:junit:4.11'
+}
+
+def defaultEncoding = 'UTF-8'
+tasks.withType(AbstractCompile) each { it.options.encoding = defaultEncoding }
+tasks.withType(GroovyCompile) each { it.groovyOptions.encoding = defaultEncoding }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
+}
+

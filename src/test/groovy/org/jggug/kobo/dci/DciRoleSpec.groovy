@@ -16,14 +16,15 @@ class DciRoleSpec extends Specification {
         expect:
         data.asRole(SampleRole) {
             assert data.hello() == "Hello, FooBar."
-        } == null
+            return "good"
+        } == "good"
 
         when: "no effect for another instance of SampleData"
         data.asRole(SampleRole) {
             def anotherData = new SampleData(name: "Bazzz")
             anotherData.hello() == "Hello, Bazzz."
             assert false
-        } == null
+        }
 
         then:
         thrown MissingMethodException
@@ -42,14 +43,15 @@ class DciRoleSpec extends Specification {
         expect:
         data.use(SampleRole) {
             assert data.hello() == "Hello, FooBar."
-        } == null
+            return "good"
+        } == "good"
 
         and: "Unfortunately, `use` method affects another instance of SampleData"
         data.use(SampleRole) {
             def anotherData = new SampleData(name: "Bazzz")
             assert anotherData.hello() == "Hello, Bazzz."
-
-        } == null
+            return "too bad"
+        } == "too bad"
 
         when: "vanish the dynamic method out of the scope"
         data.hello()

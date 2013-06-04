@@ -48,9 +48,11 @@ class DciRoleSpec extends Specification {
         data.as(SampleRole) {
             assert data.hello() == "Hello, FooBar."
 
-            // no effect
+            // no effect: data2 doesn't have hello method
             def data2 = new SampleData(name: "Bazzz")
             data2.hello() == "Hello, Bazzz."
+            assert false
+
         } == null
 
         then:

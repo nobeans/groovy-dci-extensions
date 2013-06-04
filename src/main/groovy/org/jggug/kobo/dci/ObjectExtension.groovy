@@ -2,7 +2,7 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static Object withRole(Object self, Class roleClass, Closure closure) {
+    static Object asRole(Object self, Class roleClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {
             def myMetaClass = new TemporalDelegatingMetaClass(savedMetaClass)

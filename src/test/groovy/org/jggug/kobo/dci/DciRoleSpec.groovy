@@ -9,17 +9,17 @@ class DciRoleSpec extends Specification {
         ObjectExtension.extendMetaClass()
     }
 
-    def "by `withRole` method to add dynamic methods into only target instance"() {
+    def "by `asRole` method to add dynamic methods into only target instance"() {
         given:
         def data = new SampleData(name: "FooBar")
 
         expect:
-        data.withRole(SampleRole) {
+        data.asRole(SampleRole) {
             assert data.hello() == "Hello, FooBar."
         } == null
 
         when: "for another instance of SampleData"
-        data.withRole(SampleRole) {
+        data.asRole(SampleRole) {
             assert data.hello() == "Hello, FooBar."
 
             // no effect: data2 doesn't have hello method

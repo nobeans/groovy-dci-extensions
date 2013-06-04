@@ -2,23 +2,20 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static setup() {
-        Object.metaClass.as = { Class klass, Closure closure ->
-            // TODO ここで一時的にdelegateのmetaClasssにklassを追加したい
-//            delegate.metaClass.mixin klass
-//            closure.delegate = delegate
-//            closure.call()
-
-            def savedMetaClass = delegate.metaClass
-            try {
-                def myMetaClass = new TemporalDelegatingMetaClass(savedMetaClass)
-                delegate.setMetaClass(myMetaClass)
-                delegate.metaClass.mixin klass
-                closure.delegate = delegate
-                closure.call()
-            } finally {
-                delegate.setMetaClass(savedMetaClass)
-            }
+    static Object withRole(Object self, Class roleClass, Closure closure) {
+        def savedMetaClass = self.metaClass
+        try {
+            def myMetaClass = new TemporalDelegatingMetaClass(savedMetaClass)
+            self.setMetaClass(myMetaClass)
+            self.metaClass.mixin roleClass
+            closure.delegate = self
+            closure.call()
+        } finally {
+            self.setMetaClass(savedMetaClass)
         }
+    }
+
+    static extendMetaClass() {
+        Object.metaClass.mixin ObjectExtension
     }
 }

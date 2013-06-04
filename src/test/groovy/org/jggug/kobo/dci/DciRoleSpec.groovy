@@ -6,10 +6,40 @@ import spock.lang.Specification
 class DciRoleSpec extends Specification {
 
     def setupSpec() {
-        ObjectExtension.setup()
+        ObjectExtension.extendMetaClass()
     }
 
-    def "default `use` method looks like good, but it affects all instances of the class"() {
+    def "by `withRole` method to add dynamic methods into only target instance"() {
+        given:
+        def data = new SampleData(name: "FooBar")
+
+        expect:
+        data.withRole(SampleRole) {
+            assert data.hello() == "Hello, FooBar."
+        } == null
+
+        when: "for another instance of SampleData"
+        data.withRole(SampleRole) {
+            assert data.hello() == "Hello, FooBar."
+
+            // no effect: data2 doesn't have hello method
+            def data2 = new SampleData(name: "Bazzz")
+            data2.hello() == "Hello, Bazzz."
+            assert false
+
+        } == null
+
+        then:
+        thrown MissingMethodException
+
+        when: "vanish the dynamic method out of the scope"
+        data.hello()
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def "default `use` method looks like good, but it affects all instances of the class. So it cannot be used for DCI."() {
         given:
         def data = new SampleData(name: "FooBar")
 
@@ -27,36 +57,6 @@ class DciRoleSpec extends Specification {
             assert data2.hello() == "Hello, Bazzz."
 
         } == null
-
-        when: "vanish the dynamic method out of the scope"
-        data.hello()
-
-        then:
-        thrown MissingMethodException
-    }
-
-    def "by `as` method to add dynamic methods into only target instance"() {
-        given:
-        def data = new SampleData(name: "FooBar")
-
-        expect:
-        data.as(SampleRole) {
-            assert data.hello() == "Hello, FooBar."
-        } == null
-
-        when: "for another instance of SampleData"
-        data.as(SampleRole) {
-            assert data.hello() == "Hello, FooBar."
-
-            // no effect: data2 doesn't have hello method
-            def data2 = new SampleData(name: "Bazzz")
-            data2.hello() == "Hello, Bazzz."
-            assert false
-
-        } == null
-
-        then:
-        thrown MissingMethodException
 
         when: "vanish the dynamic method out of the scope"
         data.hello()

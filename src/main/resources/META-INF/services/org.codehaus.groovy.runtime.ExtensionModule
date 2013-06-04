@@ -1,0 +1,4 @@
+moduleName = Groovy DCI Extension
+moduleVersion = 0.1
+extensionClasses = \
+  org.jggug.kobo.dci.ObjectExtension

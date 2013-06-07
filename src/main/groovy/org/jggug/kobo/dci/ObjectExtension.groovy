@@ -2,7 +2,7 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static Object mixin(Object self, Class categoryClass) {
+    static void mixin(Object self, Class categoryClass) {
         self.metaClass.mixin categoryClass
     }
 
@@ -10,8 +10,8 @@ class ObjectExtension {
         def savedMetaClass = self.metaClass
         try {
             // replaced a top of metaClass
-            def myMetaClass = new DelegatingMetaClass(savedMetaClass)
-            self.setMetaClass(myMetaClass)
+            def temporaryMetaClass = new DelegatingMetaClass(savedMetaClass)
+            self.setMetaClass(temporaryMetaClass)
 
             // mix-in role temporarily
             self.metaClass.mixin categoryClass

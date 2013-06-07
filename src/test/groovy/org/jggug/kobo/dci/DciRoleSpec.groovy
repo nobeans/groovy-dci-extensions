@@ -45,6 +45,16 @@ class DciRoleSpec extends Specification {
         thrown MissingMethodException
     }
 
+    def ""() {
+        when:
+        data.mixin(SampleRole) {
+            assert data.hello() == "Hello, FooBar."
+        }
+
+        then:
+        data.hello() == "Hello, FooBar."
+    }
+
     def "default `use` method looks like good, but it affects all instances of the class. So it cannot be used for DCI."() {
         expect:
         data.use(SampleRole) {

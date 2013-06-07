@@ -36,9 +36,7 @@ class ObjectExtension {
 
             // evaluate closure
             closure.call()
-
         } finally {
-            // restore metaClass
             self.setMetaClass(savedMetaClass)
         }
     }

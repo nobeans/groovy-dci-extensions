@@ -2,7 +2,7 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static Object with(Object self, Class roleClass, Closure closure) {
+    static Object mixin(Object self, Class roleClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {
             // replaced a top of metaClass

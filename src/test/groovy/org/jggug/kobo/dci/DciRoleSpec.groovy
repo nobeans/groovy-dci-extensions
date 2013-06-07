@@ -14,20 +14,20 @@ class DciRoleSpec extends Specification {
         data = new SampleData(name: "FooBar")
     }
 
-    def "by `with` method to add dynamic methods into target instance"() {
+    def "by `mixin` method to add dynamic methods into target instance"() {
         expect:
-        data.with(SampleRole) {
+        data.mixin(SampleRole) {
             assert data.hello() == "Hello, FooBar."
             return "good"
         } == "good"
     }
 
-    def "delegate to the data object if missing the method because it's `with` method"() {
+    def "delegate to the data object if missing the method because it's `mixin` method"() {
         expect:
-        data.with(SampleRole) { hello() == "Hello, FooBar." }
+        data.mixin(SampleRole) { hello() == "Hello, FooBar." }
     }
 
-    def "vanish the dynamic method after calling `with` method"() {
+    def "vanish the dynamic method after calling `mixin` method"() {
         when:
         data.hello()
 
@@ -35,24 +35,13 @@ class DciRoleSpec extends Specification {
         thrown MissingMethodException
     }
 
-    def "by `with` method to add dynamic methods into only target instance"() {
+    def "by `mixin` method to add dynamic methods into only target instance"() {
         when: "no effect for another instance of SampleData"
-        data.with(SampleRole) {
+        data.mixin(SampleRole) {
             def anotherData = new SampleData(name: "Bazzz")
             anotherData.hello() == "Hello, Bazzz."
             assert false
         }
-
-        then:
-        thrown MissingMethodException
-    }
-
-    def "The original `with(Closure)` is still avaiable"() {
-        expect:
-        data.with { name == "FooBar" }
-
-        when: "of course, there isn't `hello()` method"
-        data.hello()
 
         then:
         thrown MissingMethodException
@@ -65,7 +54,9 @@ class DciRoleSpec extends Specification {
             return "good"
         } == "good"
 
-        and: "Unfortunately, `use` method affects another instance of SampleData"
+        and: "Unfortunately, `use` method affects another instance of SampleData."
+        // Type of receiver has no meaning.
+        // All instances of the class are affected by the 'use' method in the scope of the closure.
         data.use(SampleRole) {
             def anotherData = new SampleData(name: "Bazzz")
             assert anotherData.hello() == "Hello, Bazzz."

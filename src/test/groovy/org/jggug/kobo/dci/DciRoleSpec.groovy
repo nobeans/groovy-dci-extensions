@@ -24,9 +24,7 @@ class DciRoleSpec extends Specification {
 
     def "delegate to the data object if missing the method because it's `with` method"() {
         expect:
-        data.with(SampleRole) {
-            hello() == "Hello, FooBar."
-        }
+        data.with(SampleRole) { hello() == "Hello, FooBar." }
     }
 
     def "vanish the dynamic method after calling `with` method"() {
@@ -44,6 +42,17 @@ class DciRoleSpec extends Specification {
             anotherData.hello() == "Hello, Bazzz."
             assert false
         }
+
+        then:
+        thrown MissingMethodException
+    }
+
+    def "The original `with(Closure)` is still avaiable"() {
+        expect:
+        data.with { name == "FooBar" }
+
+        when: "of course, there isn't `hello()` method"
+        data.hello()
 
         then:
         thrown MissingMethodException

@@ -12,9 +12,6 @@ class ObjectExtension {
             // mix-in role temporarily
             self.metaClass.mixin roleClass
 
-            // set self as a method/property missing receiver
-            closure.delegate = self
-
             // evaluate closure
             closure.call()
 

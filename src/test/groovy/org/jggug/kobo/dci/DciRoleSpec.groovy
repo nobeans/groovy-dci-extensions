@@ -22,12 +22,10 @@ class DciRoleSpec extends Specification {
         } == "good"
     }
 
-    def "delegate to the data object if missing the method because it's `mixin` method"() {
-        expect:
-        data.mixin(SampleRole) { hello() == "Hello, FooBar." }
-    }
-
     def "vanish the dynamic method after calling `mixin` method"() {
+        given:
+        data.mixin(SampleRole) { data.hello() }
+
         when:
         data.hello()
 

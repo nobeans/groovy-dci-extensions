@@ -14,17 +14,17 @@ class DciRoleSpec extends Specification {
         data = new SampleData(name: "FooBar")
     }
 
-    def "by `mixin` method to add dynamic methods into target instance"() {
+    def "by `withMixin` method to add dynamic methods into target instance"() {
         expect:
-        data.mixin(SampleRole) {
+        data.withMixin(SampleRole) {
             assert data.hello() == "Hello, FooBar."
             return "good"
         } == "good"
     }
 
-    def "vanish the dynamic method after calling `mixin` method"() {
+    def "vanish the dynamic method after calling `withMixin` method"() {
         given:
-        data.mixin(SampleRole) { data.hello() }
+        data.withMixin(SampleRole) { data.hello() }
 
         when:
         data.hello()
@@ -33,9 +33,9 @@ class DciRoleSpec extends Specification {
         thrown MissingMethodException
     }
 
-    def "by `mixin` method to add dynamic methods into only target instance"() {
+    def "by `withMixin` method to add dynamic methods into only target instance"() {
         when: "no effect for another instance of SampleData"
-        data.mixin(SampleRole) {
+        data.withMixin(SampleRole) {
             def anotherData = new SampleData(name: "Bazzz")
             anotherData.hello() == "Hello, Bazzz."
             assert false
@@ -43,16 +43,6 @@ class DciRoleSpec extends Specification {
 
         then:
         thrown MissingMethodException
-    }
-
-    def ""() {
-        when:
-        data.mixin(SampleRole) {
-            assert data.hello() == "Hello, FooBar."
-        }
-
-        then:
-        data.hello() == "Hello, FooBar."
     }
 
     def "default `use` method looks like good, but it affects all instances of the class. So it cannot be used for DCI."() {

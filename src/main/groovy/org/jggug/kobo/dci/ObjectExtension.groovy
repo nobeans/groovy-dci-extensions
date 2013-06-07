@@ -2,11 +2,7 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static void mixin(Object self, Class categoryClass) {
-        self.metaClass.mixin categoryClass
-    }
-
-    static Object mixin(Object self, Class categoryClass, Closure closure) {
+    static Object withMixin(Object self, Class categoryClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {
             // replaced a top of metaClass

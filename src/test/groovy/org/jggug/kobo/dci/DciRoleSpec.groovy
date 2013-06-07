@@ -16,7 +16,7 @@ class DciRoleSpec extends Specification {
 
     def "the name of `asRole` is appropriate for DCI"() {
         expect:
-        data.asRole(SampleRole) {
+        data.asRole(Greeter) {
             assert data.hello() == "Hello, FooBar."
             return "good"
         } == "good"
@@ -27,7 +27,7 @@ class DciRoleSpec extends Specification {
 
     def "by `withMixin` method to add dynamic methods into target instance"() {
         expect:
-        data.withMixin(SampleRole) {
+        data.withMixin(Greeter) {
             assert data.hello() == "Hello, FooBar."
             return "good"
         } == "good"
@@ -35,7 +35,7 @@ class DciRoleSpec extends Specification {
 
     def "vanish the dynamic method after calling `withMixin` method"() {
         given:
-        data.withMixin(SampleRole) { data.hello() }
+        data.withMixin(Greeter) { data.hello() }
 
         when:
         data.hello()
@@ -46,7 +46,7 @@ class DciRoleSpec extends Specification {
 
     def "by `withMixin` method to add dynamic methods into only target instance"() {
         when: "no effect for another instance of SampleData"
-        data.withMixin(SampleRole) {
+        data.withMixin(Greeter) {
             def anotherData = new SampleData(name: "Bazzz")
             anotherData.hello() == "Hello, Bazzz."
             assert false
@@ -58,7 +58,7 @@ class DciRoleSpec extends Specification {
 
     def "default `use` method looks like good, but it affects all instances of the class. So it cannot be used for DCI."() {
         expect:
-        data.use(SampleRole) {
+        data.use(Greeter) {
             assert data.hello() == "Hello, FooBar."
             return "good"
         } == "good"
@@ -66,7 +66,7 @@ class DciRoleSpec extends Specification {
         and: "Unfortunately, `use` method affects another instance of SampleData."
         // Type of receiver has no meaning.
         // All instances of the class are affected by the 'use' method in the scope of the closure.
-        data.use(SampleRole) {
+        data.use(Greeter) {
             def anotherData = new SampleData(name: "Bazzz")
             assert anotherData.hello() == "Hello, Bazzz."
             return "too bad"
@@ -84,7 +84,7 @@ class DciRoleSpec extends Specification {
     }
 
     @DciRole(SampleData)
-    static class SampleRole {
+    static class Greeter {
         String hello() {
             "Hello, ${this.name}."
         }

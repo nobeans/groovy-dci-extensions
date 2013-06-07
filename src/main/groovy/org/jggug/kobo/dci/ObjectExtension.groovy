@@ -9,11 +9,13 @@ class ObjectExtension {
             def myMetaClass = new DelegatingMetaClass(savedMetaClass)
             self.setMetaClass(myMetaClass)
 
-            // mix-in role
+            // mix-in role temporarily
             self.metaClass.mixin roleClass
 
-            // evaluate closure
+            // set self as a method/property missing receiver
             closure.delegate = self
+
+            // evaluate closure
             closure.call()
 
         } finally {

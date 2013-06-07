@@ -2,7 +2,11 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    static Object mixin(Object self, Class roleClass, Closure closure) {
+    static Object mixin(Object self, Class categoryClass) {
+        self.metaClass.mixin categoryClass
+    }
+
+    static Object mixin(Object self, Class categoryClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {
             // replaced a top of metaClass
@@ -10,7 +14,7 @@ class ObjectExtension {
             self.setMetaClass(myMetaClass)
 
             // mix-in role temporarily
-            self.metaClass.mixin roleClass
+            self.metaClass.mixin categoryClass
 
             // evaluate closure
             closure.call()

@@ -14,6 +14,17 @@ class DciRoleSpec extends Specification {
         data = new SampleData(name: "FooBar")
     }
 
+    def "the name of `asRole` is appropriate for DCI"() {
+        expect:
+        data.asRole(SampleRole) {
+            assert data.hello() == "Hello, FooBar."
+            return "good"
+        } == "good"
+
+        // but in the point of view of a standard API of Groovy, withMixin is better.
+        // "Role" is a word of DCI.
+    }
+
     def "by `withMixin` method to add dynamic methods into target instance"() {
         expect:
         data.withMixin(SampleRole) {

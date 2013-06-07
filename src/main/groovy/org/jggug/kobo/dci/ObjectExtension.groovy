@@ -2,6 +2,11 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
+    // alias for DCI
+    static Object asRole(Object self, Class categoryClass, Closure closure) {
+        withMixin(self, categoryClass, closure)
+    }
+
     static Object withMixin(Object self, Class categoryClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {

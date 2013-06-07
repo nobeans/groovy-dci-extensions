@@ -2,11 +2,28 @@ package org.jggug.kobo.dci
 
 class ObjectExtension {
 
-    // alias for DCI
+    /**
+     * An alias method of {@code withMixin} for DCI.
+     *
+     * @param self
+     * @param categoryClass
+     * @param closure
+     * @return
+     */
     static Object asRole(Object self, Class categoryClass, Closure closure) {
         withMixin(self, categoryClass, closure)
     }
 
+    /**
+     * Mix-in the category to self object only in the scope scope.
+     *
+     * TODO I want this method as a standard Groovy API!
+     *
+     * @param self
+     * @param categoryClass
+     * @param closure
+     * @return
+     */
     static Object withMixin(Object self, Class categoryClass, Closure closure) {
         def savedMetaClass = self.metaClass
         try {

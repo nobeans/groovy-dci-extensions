@@ -43,16 +43,19 @@ class BlackdragSpec extends Specification {
         def waitForStarting = { id ->
             history << "${id}:waiting start"
             startLatch.countDown()
+            startLatch.await()
             history << "${id}:started"
         }
         def waitForEnding = { id ->
             history << "${id}:waiting end"
             endLatch.countDown()
+            startLatch.await()
             history << "${id}:ended"
         }
+        def threads = []
 
         when: "T1 doing this"
-        Thread.start {
+        threads << Thread.start {
             person.withMixin(PresidentRole) {
                 waitForStarting("T1")
                 try {
@@ -64,7 +67,7 @@ class BlackdragSpec extends Specification {
         }
 
         and: "and T2 doing this"
-        Thread.start {
+        threads << Thread.start {
             person.withMixin(FatherRole) {
                 waitForStarting("T2")
                 try {
@@ -75,8 +78,11 @@ class BlackdragSpec extends Specification {
             }
         }
 
+        and:
+        threads*.join()
+
         then:
-        history == []
+        println history // to see
     }
 
     static class Person {

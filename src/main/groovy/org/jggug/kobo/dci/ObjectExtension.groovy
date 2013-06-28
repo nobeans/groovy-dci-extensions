@@ -1,6 +1,14 @@
 package org.jggug.kobo.dci
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
+
 class ObjectExtension {
+
+    // key:targetInstance, value:???
+    private static Map<Object, AtomicReference> metaClassRepository = new ConcurrentHashMap().withDefault {
+        new AtomicReference<MetaClass>()
+    }
 
     /**
      * An alias method of {@code withMixin} for DCI.
@@ -25,7 +33,16 @@ class ObjectExtension {
      * @return
      */
     static Object withMixin(Object self, Class categoryClass, Closure closure) {
-        def savedMetaClass = self.metaClass
+        def savedMetaClass
+
+        def repository = metaClassRepository.get(self)
+
+        synchronized (repository) {
+            assert repository.get() == null: "metaClass of ${self} is already expanded by 'withMixin'"
+            savedMetaClass = self.metaClass
+            repository.set(savedMetaClass)
+        }
+
         try {
             // replaced a top of metaClass
             def temporaryMetaClass = new DelegatingMetaClass(savedMetaClass)
@@ -37,7 +54,7 @@ class ObjectExtension {
             // evaluate closure
             closure.call()
         } finally {
-            self.setMetaClass(savedMetaClass)
+            self.setMetaClass(repository.getAndSet(null))
         }
     }
 

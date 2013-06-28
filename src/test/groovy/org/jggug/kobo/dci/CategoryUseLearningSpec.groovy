@@ -5,34 +5,12 @@ import spock.lang.Specification
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.CountDownLatch
 
-class BlackdragSpec extends Specification {
+class CategoryUseLearningSpec extends Specification {
 
     Person person
 
-    def setupSpec() {
-        ObjectExtension.extendMetaClass()
-    }
-
     def setup() {
         person = new Person(name: "Obama")
-    }
-
-    def "nobeans's first sample. too simple."() {
-        expect:
-        person.withMixin(PresidentRole) {
-            person.sayHelloTo("Mike") == "Hello, Mike."
-        }
-
-        and:
-        person.withMixin(FatherRole) {
-            person.sayHelloTo("Michelle") == "Hello, my honey?"
-        }
-
-        when:
-        person.sayHelloTo("Ooops")
-
-        then:
-        thrown MissingMethodException
     }
 
     def "blackdrag: (A) Multithread Context"() {
@@ -57,7 +35,7 @@ class BlackdragSpec extends Specification {
 
         when: "T1 doing this"
         threads << Thread.start {
-            person.withMixin(PresidentRole) {
+            use(PresidentRole) {
                 waitForStarting("T1")
                 try {
                     results << (person.sayHelloTo("Mike") == "Hello, Mike.")
@@ -70,7 +48,7 @@ class BlackdragSpec extends Specification {
 
         and: "and T2 doing this"
         threads << Thread.start {
-            person.withMixin(FatherRole) {
+            use(FatherRole) {
                 waitForStarting("T2")
                 try {
                     results << (person.sayHelloTo("Michelle") == "Hello, my honey?")
@@ -84,8 +62,8 @@ class BlackdragSpec extends Specification {
         and:
         threads*.join()
 
-        then: "Unfortunately, one is success but another one is failed!!"
-        results as Set == [true, false] as Set
+        then: "No problem?"
+        results.every { it == true }
         println history // to see
     }
 
@@ -96,7 +74,7 @@ class BlackdragSpec extends Specification {
         }
 
         when:
-        person.withMixin(PresidentRole) {
+        use(PresidentRole) {
             assert person.sayHelloTo("Mike") == "Hello, Mike."
             foo(person)
         }

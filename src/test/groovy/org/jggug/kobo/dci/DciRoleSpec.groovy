@@ -79,6 +79,62 @@ class DciRoleSpec extends Specification {
         thrown MissingMethodException
     }
 
+    def "default `use` method doesn't affect another thread."() {
+        expect:
+        use(Greeter) {
+            Thread.start {
+                def anotherThreadData = new SampleData(name: "Bazzz")
+                try {
+                    anotherThreadData.hello()
+                    assert false
+                } catch (MissingMethodException e) {
+                    // OK
+                }
+            }.join()
+
+            assert data.hello() == "Hello, FooBar."
+            return "good"
+
+        } == "good"
+    }
+
+    def "`mixin` affects an instance permanently among threads."() {
+        when:
+        Thread.start {
+            data.metaClass.mixin Greeter
+            assert data.hello() == "Hello, FooBar."
+        }.join()
+
+        then: "mixin effect is still there"
+        assert data.hello() == "Hello, FooBar."
+
+        and:
+        Thread.start {
+            assert data.hello() == "Hello, FooBar."
+        }.join()
+    }
+
+    def "blagdrag(A): `withMixin` affects an instance permanently among threads."() {
+        when:
+        Thread.start {
+            data.metaClass.mixin Greeter
+            assert data.hello() == "Hello, FooBar."
+        }.join()
+        Thread.start {
+            data.metaClass.mixin Greeter
+            assert data.hello() == "Hello, FooBar."
+        }.join()
+
+        then: "mixin effect is still there"
+        assert data.hello() == "Hello, FooBar."
+
+        and:
+        Thread.start {
+            assert data.hello() == "Hello, FooBar."
+        }.join()
+    }
+
+
     static class SampleData {
         String name
     }

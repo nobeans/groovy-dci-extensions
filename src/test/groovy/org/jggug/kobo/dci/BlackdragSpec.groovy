@@ -108,9 +108,6 @@ class BlackdragSpec extends Specification {
         thrown MissingMethodException
     }
 
-//    def "blackdrag: (C) Lexical Context"() {
-//    }
-
     static class Person {
         String name
     }

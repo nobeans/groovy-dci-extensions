@@ -17,7 +17,7 @@ class BlackdragSpec extends Specification {
         person = new Person(name: "Obama")
     }
 
-    def "nobeans: my sample"() {
+    def "nobeans's first sample. too simple."() {
         expect:
         person.withMixin(PresidentRole) {
             person.sayHelloTo("Mike") == "Hello, Mike."
@@ -61,7 +61,7 @@ class BlackdragSpec extends Specification {
                 waitForStarting("T1")
                 try {
                     results << (person.sayHelloTo("Mike") == "Hello, Mike.")
-                    assert person.sayHelloTo("Mike") == "Hello, Mike."
+                    assert person.sayHelloTo("Mike") == "Hello, Mike." // to see on stderr
                 } finally {
                     waitForEnding("T1")
                 }
@@ -74,7 +74,7 @@ class BlackdragSpec extends Specification {
                 waitForStarting("T2")
                 try {
                     results << (person.sayHelloTo("Michelle") == "Hello, my honey?")
-                    assert person.sayHelloTo("Michelle") == "Hello, my honey?"
+                    assert person.sayHelloTo("Michelle") == "Hello, my honey?" // to see on stderr
                 } finally {
                     waitForEnding("T2")
                 }
@@ -84,10 +84,32 @@ class BlackdragSpec extends Specification {
         and:
         threads*.join()
 
-        then: "Unfortunately, one is success but another one is failed!"
+        then: "Unfortunately, one is success but another one is failed!!"
         results as Set == [true, false] as Set
         println history // to see
     }
+
+    def "blackdrag: (B) Stack context"() {
+
+        //This is probably only if you override an existing method... but let us assume you have
+
+        given:
+        def foo = { person ->
+            assert person.sayHelloTo(person) == "Hello me"
+        }
+
+        when:
+        person.withMixin(PresidentRole) {
+            assert person.sayHelloTo("Mike") == "Hello, Mike."
+            foo(person)
+        }
+
+        then: "MissingMethodException occurs in foo!!"
+        thrown MissingMethodException
+    }
+
+//    def "blackdrag: (C) Lexical Context"() {
+//    }
 
     static class Person {
         String name

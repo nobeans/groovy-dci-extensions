@@ -53,12 +53,14 @@ class BlackdragSpec extends Specification {
             history << "${id}:ended"
         }
         def threads = []
+        def results = new ArrayBlockingQueue(2)
 
         when: "T1 doing this"
         threads << Thread.start {
             person.withMixin(PresidentRole) {
                 waitForStarting("T1")
                 try {
+                    results << (person.sayHelloTo("Mike") == "Hello, Mike.")
                     assert person.sayHelloTo("Mike") == "Hello, Mike."
                 } finally {
                     waitForEnding("T1")
@@ -71,6 +73,7 @@ class BlackdragSpec extends Specification {
             person.withMixin(FatherRole) {
                 waitForStarting("T2")
                 try {
+                    results << (person.sayHelloTo("Michelle") == "Hello, my honey?")
                     assert person.sayHelloTo("Michelle") == "Hello, my honey?"
                 } finally {
                     waitForEnding("T2")
@@ -81,7 +84,8 @@ class BlackdragSpec extends Specification {
         and:
         threads*.join()
 
-        then:
+        then: "Unfortunately, one is success but another one is failed!"
+        results as Set == [true, false] as Set
         println history // to see
     }
 
